@@ -14,8 +14,8 @@ define("SERIAL_DEVICE_OPENED", 2);
  * Changes added by Rizwan Kassim <rizwank@geekymedia.com> for OSX functionality
  * default serial device for osx devices is /dev/tty.serial for machines with a built in serial device
  *
- * @author Rémy Sanchez <thenux@gmail.com>
- * @thanks Aurélien Derouineau for finding how to open serial ports with windows
+ * @author Ramy Sanchez <thenux@gmail.com>
+ * @thanks Auralien Derouineau for finding how to open serial ports with windows
  * @thanks Alec Avedisyan for help and testing with reading
  * @thanks Jim Wright for OSX cleanup/fixes.
  * @copyright under GPL 2 licence
@@ -29,6 +29,12 @@ class PhpSerial
     public $_dState = SERIAL_DEVICE_NOTSET;
     public $_buffer = "";
     public $_os = "";
+    
+    /**
+     * Tiempo de espera en milisegundos antes de cancelar la lectura del puerto serial
+     * @var int 
+     */
+    public $timeout = 2000;
 
     /**
      * This var says if buffer should be flushed by sendMessage (true) or manualy (false)
@@ -557,6 +563,7 @@ class PhpSerial
 
             return false;
         }
+        $millisecondsStart = round(microtime(true) * 1000);
 
         if ($this->_os === "linux" || $this->_os === "osx") {
             // Behavior in OSX isn't to wait for new data to recover, but just grabs what's there!
@@ -565,10 +572,14 @@ class PhpSerial
             $i = 0;
 
             $count = $count ?: 128;
-
             for ($i=0; $i<$count;) {
                 $content .= fread($this->_dHandle, min($count-$i, 128));
                 $i += strlen($content);
+                $total = round(microtime(true) * 1000) - $millisecondsStart;
+                if($total >= $this->timeout){
+                    $content = false;
+                    break;
+                }
             }
 
             return $content;
@@ -584,10 +595,20 @@ class PhpSerial
                     } else {
                         $content .= fread($this->_dHandle, 128);
                     }
+                    $total = round(microtime(true) * 1000) - $millisecondsStart;
+                    if($total >= $this->timeout){
+                        $content = false;
+                        break;
+                    }
                 } while (($i += 128) === strlen($content));
             } else {
                 do {
                     $content .= fread($this->_dHandle, 128);
+                    $total = round(microtime(true) * 1000) - $millisecondsStart;
+                    if($total >= $this->timeout){
+                        $content = false;
+                        break;
+                    }
                 } while (($i += 128) === strlen($content));
             }
 
