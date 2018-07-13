@@ -1,5 +1,5 @@
 {
-    "name": "gregwar/php-serial",
+    "name": "tecnoready/php-serial",
     "description": "This PHP class can be used to communicate with a serial port under Linux, OSX or Windows.",
     "keywords": ["serial", "serialport"],
     "homepage": "http://code.google.com/p/php-serial/",
