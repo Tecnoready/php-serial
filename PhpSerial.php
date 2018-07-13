@@ -575,8 +575,7 @@ class PhpSerial
             for ($i=0; $i<$count;) {
                 $content .= fread($this->_dHandle, min($count-$i, 128));
                 $i += strlen($content);
-                $total = round(microtime(true) * 1000) - $millisecondsStart;
-                if($total >= $this->timeout){
+                if((round(microtime(true) * 1000) - $millisecondsStart) >= $this->timeout){
                     $content = false;
                     break;
                 }
@@ -595,8 +594,7 @@ class PhpSerial
                     } else {
                         $content .= fread($this->_dHandle, 128);
                     }
-                    $total = round(microtime(true) * 1000) - $millisecondsStart;
-                    if($total >= $this->timeout){
+                    if((round(microtime(true) * 1000) - $millisecondsStart) >= $this->timeout){
                         $content = false;
                         break;
                     }
@@ -604,8 +602,7 @@ class PhpSerial
             } else {
                 do {
                     $content .= fread($this->_dHandle, 128);
-                    $total = round(microtime(true) * 1000) - $millisecondsStart;
-                    if($total >= $this->timeout){
+                    if((round(microtime(true) * 1000) - $millisecondsStart) >= $this->timeout){
                         $content = false;
                         break;
                     }
