@@ -307,13 +307,13 @@ class PhpSerial
 
             return false;
         }
-
+        
         if ($this->_os === "linux") {
             $ret = $this->_exec("stty -F " . $this->_device . " " . $args[$parity], $out);
         } elseif ($this->_os === "osx") {
             $ret = $this->_exec("stty -f " . $this->_device . " " . $args[$parity], $out);
         } else {
-            $ret = $this->_exec("mode " . $this->_windevice . " PARITY=" . $parity{0}, $out);
+            $ret = $this->_exec("mode " . $this->_windevice . " PARITY=" . $parity[0], $out);
         }
 
         if ($ret === 0) {
@@ -468,12 +468,12 @@ class PhpSerial
         }
 
         $return = exec("setserial " . $this->_device . " " . $param . " " . $arg . " 2>&1");
-
-        if ($return{0} === "I") {
+        
+        if ($return[0] === "I") {
             trigger_error("setserial: Invalid flag", E_USER_WARNING);
 
             return false;
-        } elseif ($return{0} === "/") {
+        } elseif ($return[0] === "/") {
             trigger_error("setserial: Error with device file", E_USER_WARNING);
 
             return false;
